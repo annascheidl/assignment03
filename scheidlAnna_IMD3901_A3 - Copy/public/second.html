@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Second mode </title>
+        <meta charset="utf-8" />
+        <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/aframe-environment-component.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
+        <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.min.js"></script>
+        <script src="https://unpkg.com/super-hands@^3.0.1/dist/super-hands.min.js"></script>
+        <!--<script src="/js/teleport.js"></script> -->
+
+        <link rel="stylesheet" href="css/begin.css">
+
+        <script>
+            AFRAME.registerComponent('begin', {
+                init: function() {
+                    console.log("scene loaded");
+                    document.querySelector('#startButton').style.display = 'block';
+                }
+            });
+
+            const startExperience = function() {
+                document.querySelector('#the-beginning').style.display = 'none';
+
+            }
+            </script>
+
+            <script>
+                let socket= io();
+
+                function playertoCorner(player) {
+                    return player.x + " " + player.y + " " + player.z
+    
+                }
+                function clickHandler(corner){
+                    let cameraType = document.querySelector('#cameraType')
+
+                    let cornerPos = playertoCorner(corner.getAttribute('position'))
+                    let camPos = playertoCorner(cameraType.getAttribute('position'))
+
+                    cameraType.setAttribute('animation', {property: 'position', from: camPos, to: cornerPos, dur: 700})
+                }
+
+                function registerHandlerForClick(corner) {
+                    corner.addEventListener('click', function() {
+                        clickHandler(corner)
+                    })
+                }
+                function setupHandlers() {
+                    let cornerIDs = document.querySelectorAll('.interactive')
+                    let index = 0
+                    while (index < cornerIDs.length) {
+                        registerHandlerForClick(cornerIDs[index])
+                        index = index + 1
+                    }
+                }
+
+                window.onload = setupHandlers
+
+                var number = 0;
+                
+                socket.on('connect', (data) => {
+                    document.querySlector('#redButton').querySelector('.button').addEventListner('click', function() {
+                        socket.emit(1);
+                        number = 1;
+                    })
+                    document.querySlector('#blueButton').querySelector('.button').addEventListner('click', function() {
+                        socket.emit(2);
+                        number = 2;
+                    })
+                    document.querySlector('#greenButton').querySelector('.button').addEventListner('click', function() {
+                        socket.emit(3);
+                        number = 3;
+                    })
+                    document.querySlector('#yellowButton').querySelector('.button').addEventListner('click', function() {
+                        socket.emit(4);
+                        number = 4;
+                    })
+                })
+
+                socket.on('secondPos', data => {
+                    if (data === number) {
+                        window.location.reload()
+                    }
+                })
+
+            </script>
+            
+    </head>
+
+<body>
+    <div id="the-beginning">
+        <div class="center">
+            <button id="startButton" onclick="startExperience();"> Pick a Corner!</button>
+        </div>
+    </div>
+
+    <a-scene >
+        <a-entity class="walls">
+            <a-plane scale="50 50 1" rotation="-90 0 0" color="#ADD8E6" static-body></a-plane>
+            <a-plane scale="50 50 1" position = "-25 25 0" rotation="0 90 0" color="#C2C8C5" static-body></a-plane>        
+            <a-plane scale="50 50 1" position = "25 25 0" rotation="0 -90 0" color="#C2C8C5" static-body></a-plane>
+            <a-plane scale="50 50 1" position = "0 25 25" rotation="180 0 0" color="#C2C8C5" static-body></a-plane>
+            <a-plane scale="50 50 1" position = "0 25 -25" rotation="0 0 0" color="#C2C8C5" static-body></a-plane>
+        </a-entity>
+        <a-entity>
+
+            <a-entity id = "cameraType" >
+                <a-entity camera look-controls position="0 1.6 0">
+                    <a-entity cursor= "rayOrigin:mouse;" raycaster="far:20; interval: 200; objects:.interactive"></a-entity>
+                </a-entity>
+            </a-entity>
+        </a-entity>
+        <a-entity >
+            <a-cylinder class="interactive" id = "greenButton" teleport="green" color="green" height="1" radius="0.5" position="5 0.2 5"></a-cylinder>
+            <a-cylinder class="interactive" id = "redButton" teleport="red" color="red" height="1" radius="0.5" position="-5 0.2 -5"></a-cylinder>
+            <a-cylinder class="interactive" id = "yellowButton" teleport="yellow" color="yellow" height="1" radius="0.5" position="-5 0.2 5"></a-cylinder>
+            <a-cylinder class="interactive" id = "blueButton" teleport="blue" color="blue" height="1" radius="0.5" position="5 0.2 -5"></a-cylinder>
+
+
+          <!--  <a-entity geometry="primitive: sphere; radius: 0.5 color:rgb(255, 0, 0)" position = "3 2 3" grabbable dynamic-body= "linearDamping: 0.5 angularDamping:0.5"></a-entity>
+            <a-sphere grabbable hoverable color="#00AA00" radius="0.5" position="-1 4 -4" dynamic-body= "linearDamping: 0.07 angularDamping:0.5"></a-sphere> -->
+        </a-entity>
+
+
+    </a-scene>
+</body>
+
+</html>

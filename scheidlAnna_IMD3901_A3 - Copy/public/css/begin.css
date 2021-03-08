@@ -1,0 +1,36 @@
+#the-beginning {
+    position:fixed;
+    display:block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(176, 248, 245);
+    z-index: 999999;
+    cursor: pointer;
+}
+
+.center {
+    margin:0;
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#startButton {
+    display:none;
+    width:100%;
+    height:100%;
+    background-color: blue;
+    color: white;
+    padding: 14px 20px;
+    text-align: center;
+    display: inline-block;
+    font-size: 20px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
